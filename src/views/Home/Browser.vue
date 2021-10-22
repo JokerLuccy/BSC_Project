@@ -26,7 +26,7 @@ export default {
   padding-bottom: 30px;
   h4 {
     font-size: 14px;
-    font-family: PingFang SC;
+    font-family: "PingFang SC";
     font-weight: bold;
     color: #ffffff;
   }
@@ -37,7 +37,7 @@ export default {
     opacity: 1;
     border-radius: 3px;
     font-size: 12px;
-    font-family: PingFang SC;
+    font-family: "PingFang SC";
     font-weight: 400;
     line-height: 23px;
     text-align: center;

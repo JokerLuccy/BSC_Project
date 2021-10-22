@@ -75,7 +75,7 @@ export default {
     justify-content: space-around;
     .title {
       font-size: 18px;
-      font-family: PingFang SC;
+      font-family: "PingFang SC";
       font-weight: bold;
       color: #1e262f;
     }
@@ -100,7 +100,7 @@ export default {
     }
     .submit-btn {
       font-size: 16px;
-      font-family: PingFang SC;
+      font-family: "PingFang SC";
       font-weight: 400;
       color: #0291ff;
       align-self: flex-end;

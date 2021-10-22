@@ -7,7 +7,10 @@
       </div>
       <img class="lang-img" src="../../assets/images/cn-blue.png" />
     </header>
-    <div class="address">02xd9****B9f6</div>
+    <!-- 02xd9****B9f6 -->
+    <div class="address">
+      {{ getAddress.slice(0, 5) + "****" + getAddress.slice(-4) }}
+    </div>
     <form @submit.prevent="visiable = true">
       <input class="input-invite" type="text" placeholder="请输入邀请码" />
       <br />
@@ -79,7 +82,7 @@ export default {
       }
       span {
         font-size: 22px;
-        font-family: PingFang SC;
+        font-family: "PingFang SC";
         font-weight: bold;
         color: #1e262f;
       }
@@ -97,7 +100,7 @@ export default {
     opacity: 1;
     border-radius: 12px 0px 0px 12px;
     font-size: 12px;
-    font-family: PingFang SC;
+    font-family: "PingFang SC";
     font-weight: 400;
     line-height: 24px;
     text-align: center;
@@ -123,7 +126,7 @@ export default {
       opacity: 0.88;
       border-radius: 5px;
       font-size: 14px;
-      font-family: PingFang SC;
+      font-family: "PingFang SC";
       font-weight: 400;
       line-height: 32px;
       text-align: center;
@@ -137,7 +140,7 @@ export default {
       opacity: 1;
       border-radius: 21px;
       font-size: 16px;
-      font-family: PingFang SC;
+      font-family: "PingFang SC";
       font-weight: bold;
       line-height: 41px;
       text-align: center;

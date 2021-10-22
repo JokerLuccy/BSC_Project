@@ -23,6 +23,7 @@
         class="category-list-item"
         v-for="item in categoryList"
         :key="item.path"
+        @click="$router.push(item.path)"
       >
         {{ item.name }}
       </li>
@@ -42,6 +43,8 @@ export default {
         { path: "/home", name: "首页" },
         { path: "/withdraw", name: "提现" },
         { path: "/account_detail", name: "账户详情" },
+        { path: "/award_record", name: "奖励记录" },
+        { path: "/game_assets", name: "游戏资产" },
         { path: "/invite", name: "邀请好友" },
         { path: "/feedback", name: "用户反馈" },
       ]),
@@ -69,7 +72,7 @@ export default {
     display: flex;
     align-items: center;
     font-size: 20px;
-    font-family: PingFang SC;
+    font-family: "PingFang SC";
     font-weight: bold;
     color: #1e262f;
     img {
@@ -84,7 +87,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     font-size: 12px;
-    font-family: PingFang SC;
+    font-family: "PingFang SC";
     font-weight: 400;
     color: #1e262f;
     .category {
@@ -108,7 +111,7 @@ export default {
     transition: height 0.5s ease-in-out;
     .category-list-item {
       font-size: 16px;
-      font-family: PingFang SC;
+      font-family: "PingFang SC";
       font-weight: 500;
       color: #1e262f;
     }

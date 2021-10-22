@@ -58,7 +58,7 @@ export default {
       align-items: center;
       justify-content: center;
       font-size: 18px;
-      font-family: PingFang SC;
+      font-family: "PingFang SC";
       font-weight: bold;
       color: #ffffff;
       .circle {
@@ -94,7 +94,7 @@ export default {
     box-sizing: border-box;
     padding-left: 15px;
     font-size: 12px;
-    font-family: PingFang SC;
+    font-family: "PingFang SC";
     font-weight: 400;
     line-height: 37px;
     color: #ffffff;

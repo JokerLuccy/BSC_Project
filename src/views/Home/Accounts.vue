@@ -4,7 +4,11 @@
     <div class="content">
       <label class="myu-address">
         我的地址
-        <input type="text" readonly value="7124kj41j…24h1jh5 V1" />
+        <input
+          type="text"
+          readonly
+          :value="getAddress.slice(0, 19) + '****' + getAddress.slice(-8)"
+        />
       </label>
       <ul class="account-list">
         <li
@@ -70,19 +74,19 @@ export default {
       align-items: center;
       justify-content: space-between;
       font-size: 14px;
-      font-family: PingFang SC;
+      font-family: "PingFang SC";
       font-weight: 500;
       color: #1e262f;
       input {
         margin-left: 6px;
-        width: 244px;
+        width: 240px;
         height: 30px;
         background: #e8ecf1;
         opacity: 1;
         border-radius: 15px;
         border: none;
         font-size: 12px;
-        font-family: PingFang SC;
+        font-family: "PingFang SC";
         font-weight: 500;
         text-align: center;
         color: #7c7e82;
@@ -99,7 +103,7 @@ export default {
         width: 50%;
         label {
           font-size: 16px;
-          font-family: PingFang SC;
+          font-family: "PingFang SC";
           font-weight: 500;
           color: #1e262f;
         }
@@ -107,7 +111,7 @@ export default {
           box-sizing: border-box;
           padding-top: 10px;
           font-size: 18px;
-          font-family: PingFang SC;
+          font-family: "PingFang SC";
           font-weight: bold;
           color: #0291ff;
         }
@@ -122,7 +126,7 @@ export default {
       border-radius: 5px;
       border: none;
       font-size: 18px;
-      font-family: PingFang SC;
+      font-family: "PingFang SC";
       font-weight: bold;
       line-height: 45px;
       text-align: center;

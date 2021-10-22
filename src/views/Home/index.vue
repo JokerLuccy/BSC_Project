@@ -6,6 +6,7 @@
     <accounts />
     <browser />
     <Footer />
+    <notice />
   </div>
 </template>
 
@@ -16,8 +17,17 @@ import Accounts from "./Accounts.vue";
 import Browser from "./Browser.vue";
 import Contract from "./Contract.vue";
 import Introduce from "./Introduce.vue";
+import Notice from "./Notice.vue";
 export default {
-  components: { HomeHeader, Introduce, Contract, Accounts, Browser, Footer },
+  components: {
+    HomeHeader,
+    Introduce,
+    Contract,
+    Accounts,
+    Browser,
+    Footer,
+    Notice,
+  },
   name: "Home",
 };
 </script>

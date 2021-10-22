@@ -83,7 +83,7 @@ export default {
       align-items: flex-start;
       flex-wrap: nowrap;
       font-size: 14px;
-      font-family: PingFang SC;
+      font-family: "PingFang SC";
       font-weight: 400;
       color: #1e262f;
       margin-bottom: 10px;

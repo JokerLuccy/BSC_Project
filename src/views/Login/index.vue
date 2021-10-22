@@ -7,20 +7,37 @@
       </div>
       <img class="lang-img" src="../../assets/images/cn.png" />
     </header>
-    <button @click="$router.push('/register')" class="login-btn">
-      授权登录
-    </button>
+    <button @click="handleLogin" class="login-btn">授权登录</button>
   </div>
 </template>
 
 <script>
+import { mapMutations } from "vuex";
 import constants from "../../config/constants";
+import { getWalletAddress, isWhichPlat } from "../../utils/wallet";
 export default {
   name: "Login",
   data() {
     return {
       logoImg: constants.logoImg,
     };
+  },
+  methods: {
+    ...mapMutations(["SET_ADDRESS"]),
+    async handleLogin() {
+      if (isWhichPlat()) {
+        const addressResult = await getWalletAddress();
+        const { data, result } = addressResult;
+        if (result) {
+          this.SET_ADDRESS(data.address);
+          this.$router.push("/register");
+        } else {
+          this.$toast("请选择钱包");
+        }
+      } else {
+        this.$toast("请在TokenPocket钱包中打开");
+      }
+    },
   },
 };
 </script>
@@ -54,7 +71,7 @@ export default {
       }
       span {
         font-size: 22px;
-        font-family: PingFang SC;
+        font-family: "PingFang SC";
         font-weight: bold;
         color: #e9ecf0;
       }
@@ -76,7 +93,7 @@ export default {
     opacity: 1;
     border-radius: 21px;
     font-size: 16px;
-    font-family: PingFang SC;
+    font-family: "PingFang SC";
     font-weight: bold;
     line-height: 41px;
     text-align: center;

@@ -128,7 +128,7 @@ export default {
         opacity: 1;
         border-radius: 10px;
         font-size: 14px;
-        font-family: PingFang SC;
+        font-family: "PingFang SC";
         font-weight: 500;
         line-height: 40px;
         text-align: center;
@@ -143,7 +143,7 @@ export default {
         display: flex;
         align-items: center;
         font-size: 16px;
-        font-family: PingFang SC;
+        font-family: "PingFang SC";
         font-weight: bold;
         color: #1e262f;
         .fil-img {
@@ -167,7 +167,7 @@ export default {
           align-items: center;
           justify-content: space-between;
           font-size: 14px;
-          font-family: PingFang SC;
+          font-family: "PingFang SC";
           font-weight: 500;
 
           .name {
@@ -199,7 +199,7 @@ export default {
         display: flex;
         align-items: center;
         font-size: 16px;
-        font-family: PingFang SC;
+        font-family: "PingFang SC";
         font-weight: bold;
         color: #1e262f;
         .col-divider {
@@ -227,7 +227,7 @@ export default {
           opacity: 1;
           border-radius: 5px;
           font-size: 14px;
-          font-family: PingFang SC;
+          font-family: "PingFang SC";
           font-weight: 500;
           line-height: 40px;
           text-align: center;
@@ -254,7 +254,7 @@ export default {
         display: flex;
         align-items: center;
         font-size: 16px;
-        font-family: PingFang SC;
+        font-family: "PingFang SC";
         font-weight: bold;
         line-height: 22px;
         color: #1e262f;
@@ -281,7 +281,7 @@ export default {
             width: 28px;
             text-align: center;
             font-size: 14px;
-            font-family: PingFang SC;
+            font-family: "PingFang SC";
             font-weight: 400;
             color: #0291ff;
           }
@@ -297,7 +297,7 @@ export default {
         border-radius: 5px;
         border: none;
         font-size: 18px;
-        font-family: PingFang SC;
+        font-family: "PingFang SC";
         font-weight: bold;
         line-height: 45px;
         text-align: center;
