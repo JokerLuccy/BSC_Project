@@ -15,6 +15,7 @@
 import { mapMutations } from "vuex";
 import { logoImg, testAddress } from "../../config/constants";
 import { getWalletAddress, isWhichPlat } from "../../utils/wallet";
+import { checkRegister } from "../../server/index";
 export default {
   name: "Login",
   data() {
@@ -30,13 +31,20 @@ export default {
         const { data, result } = addressResult;
         if (result) {
           this.SET_ADDRESS(data.address);
-          this.$router.push("/register");
+          const isRegister = await checkRegister(data.address);
+          isRegister
+            ? this.$router.push("/home")
+            : this.$router.push("/register");
         } else {
           this.$toast("请选择钱包");
         }
       } else {
         if (process.env.NODE_ENV === "development") {
           this.SET_ADDRESS(testAddress);
+          const isRegister = await checkRegister(testAddress);
+          isRegister
+            ? this.$router.push("/home")
+            : this.$router.push("/register");
           this.$router.push("/register");
         }
         if (process.env.NODE_ENV === "production") {

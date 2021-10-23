@@ -2,7 +2,7 @@ import axios from "axios";
 import Nprogress from "nprogress";
 import { Notify, Toast } from "vant";
 const request = axios.create({
-  baseURL: process.env.VU_APP_BASE_URL,
+  baseURL: process.env.VUE_APP_BASE_URL,
   timeout: 1500,
   timeoutErrorMessage: "网络错误，请刷新重试",
 });
@@ -19,6 +19,7 @@ request.interceptors.response.use(
       if (response.data.code) {
         Toast.fail(response.data.message);
       } else {
+        console.log(response);
         return Promise.resolve(response.data.data);
       }
     }
