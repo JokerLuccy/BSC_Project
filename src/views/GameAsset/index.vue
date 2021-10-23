@@ -2,25 +2,35 @@
   <div class="game-assets">
     <common-header title="游戏资产" />
     <ul class="title-list">
-      <li class="list-item" v-for="item in titleList" :key="item.text">
+      <li
+        @click="currentIndex = item.id"
+        :class="{
+          'list-item': 'list-item',
+          'active-list-item':
+            currentIndex === item.id ? 'active-list-item' : '',
+        }"
+        v-for="item in titleList"
+        :key="item.text"
+      >
         {{ item.text }}
       </li>
     </ul>
     <div class="game-card">
       <div class="left">
         <p class="top">累计</p>
-        <p class="center">1582.451 SLP</p>
+        <p class="center">{{ amountSum }} SLP</p>
         <p class="bottom">{{ nowDate }}</p>
       </div>
       <div class="right">
         <p class="top">可提取</p>
-        <p class="center">1582.451 SLP</p>
-        <button class="bottom">提取</button>
+        <p class="center">{{ extractCount }}SLP</p>
+        <button @click="handleExtract" class="bottom">提取</button>
       </div>
     </div>
     <div class="game-table">
       <h4>明细</h4>
       <van-list
+        v-if="filterList.length"
         class="game-list"
         v-model="loading"
         :finished="finished"
@@ -29,41 +39,68 @@
       >
         <div class="table-title">
           <p class="time">时间</p>
-          <p class="coin">SLP</p>
+          <p class="coin">USDT</p>
           <p class="status">状态</p>
         </div>
-        <div class="table-title-item" v-for="item in 100" :key="item">
-          <p class="time">3分钟前</p>
-          <p class="coin">1.0000</p>
+        <div class="table-title-item" v-for="item in filterList" :key="item.id">
+          <p class="time">{{ item.createdAt }}</p>
+          <p class="coin">{{ item.rewarded }}</p>
           <p class="status">已发放</p>
         </div>
       </van-list>
-      <no-data v-if="false" />
+      <no-data v-else />
     </div>
   </div>
 </template>
 
 <script>
+import * as timeago from "timeago.js";
 import dayjs from "dayjs";
 import CommonHeader from "../../components/CommonHeader.vue";
+import { extract, myMinePlay } from "../../server";
+import NoData from "../../components/NoData.vue";
 export default {
-  components: { CommonHeader },
+  components: { CommonHeader, NoData },
   name: "GameAsset",
   data() {
     return {
       titleList: Object.freeze([
         { id: 0, text: "期货合约(初级)" },
-        { id: 1, text: "期货合约(中级)" },
+        { id: 1, text: "期货合约(高级)" },
         { id: 2, text: "现货合约(初级)" },
+        { id: 3, text: "现货合约(高级))" },
       ]),
       list: [],
       loading: false,
       finished: true,
+      currentIndex: 0,
+      amountSum: 0,
     };
   },
   computed: {
     nowDate() {
       return dayjs(Date.now()).format("YYYY-MM-DD");
+    },
+    filterList() {
+      switch (this.currentIndex) {
+        case 0:
+          return this.list.filter((item) => item.minerType === 1);
+        case 1:
+          return this.list.filter((item) => item.minerType === 2);
+        case 2:
+          return this.list.filter((item) => item.minerType === 3);
+        case 3:
+          return this.list.filter((item) => item.minerType === 4);
+        default:
+          return [];
+      }
+    },
+    extractCount() {
+      try {
+        return this.filterList[0].extract;
+      } catch (error) {
+        return 0;
+      }
     },
   },
   methods: {
@@ -84,6 +121,24 @@ export default {
         }
       }, 1000);
     },
+    async handleExtract() {
+      await extract(this.getAddress, this.filterList[0].id);
+      await this.getMyMinerPlay();
+    },
+    async getMyMinerPlay() {
+      const data = await myMinePlay(this.getAddress);
+      this.amountSum = data.amountSum.toFixed(4);
+      this.list = data.list.map((item) => {
+        return {
+          ...item,
+          createdAt: timeago.format(item.createdAt, "zh_CN"),
+        };
+      });
+    },
+  },
+
+  async created() {
+    await this.getMyMinerPlay();
   },
 };
 </script>
@@ -113,8 +168,7 @@ export default {
       flex-shrink: 0;
       width: 158px;
       height: 40px;
-      background: linear-gradient(90deg, #2ebef3 0%, #007eff 100%);
-      box-shadow: 0px 3px 6px rgba(2, 145, 255, 0.15);
+      color: #1e262f;
       opacity: 1;
       border-radius: 10px;
       font-size: 14px;
@@ -122,6 +176,10 @@ export default {
       font-weight: 500;
       line-height: 40px;
       text-align: center;
+    }
+    .active-list-item {
+      background: linear-gradient(90deg, #2ebef3 0%, #007eff 100%);
+      box-shadow: 0px 3px 6px rgba(2, 145, 255, 0.15);
       color: #ffffff;
     }
   }

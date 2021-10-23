@@ -8,7 +8,7 @@
       <div class="title">类别</div>
       <div class="select">
         <div class="selected" @click="visiable = !visiable">
-          请选择问题类别
+          {{ checkedQuestion.text ? checkedQuestion.text : "请选择问题类别" }}
           <i
             class="iconfont iconxiala"
             :class="{ 'active-iconxiala': visiable ? 'active-iconxiala' : '' }"
@@ -24,43 +24,116 @@
             class="question-list-item"
             v-for="item in questionList"
             :key="item.id"
+            @click="handleSelect(item)"
           >
             {{ item.text }}
-            <img src="../../assets/images/select.png" alt="" />
+            <img
+              v-if="item.isCheck"
+              src="../../assets/images/select.png"
+              alt=""
+            />
+            <img v-else src="../../assets/images/no-select.png" alt="" />
           </li>
         </ul>
       </div>
       <div class="your-question">
         <h4>你的问题</h4>
         <textarea
+          v-model="questionDes"
           class="question-textarea"
           name="yourQuestion"
           cols="30"
           rows="10"
           placeholder="请在这里描述你的问题～"
         ></textarea>
-        <button class="submit-btn">提交</button>
+        <button @click="onSubmit" class="submit-btn">提交</button>
       </div>
     </div>
+    <verify-code
+      :visiable="isShowVerify"
+      @close="handleClose"
+      @click="handleSubmit"
+      @refersh="getVerifyCodeImg"
+      v-model.trim="verifyCode"
+      :verifyImg="verifyCodeImg"
+    />
   </div>
 </template>
 
 <script>
+import { addFeedBack, getFeedBackList } from "../../server/index";
+import _ from "lodash";
+import { getVerifyCode } from "../../server/index";
+import VerifyCode from "../../components/VerifyCode.vue";
 export default {
   name: "Question",
+  components: { VerifyCode },
   data() {
     return {
+      isShowVerify: false,
       visiable: false,
-      questionList: Object.freeze([
-        { id: 0, text: "问题目录1" },
-        { id: 1, text: "升级的问题" },
-        { id: 2, text: "存款的问题" },
-        { id: 3, text: "菜园的问题" },
-        { id: 4, text: "改变付款密码" },
-        { id: 5, text: "玩法的问题" },
-        { id: 6, text: "其他问题" },
-      ]),
+      questionList: [],
+      checkedQuestion: {},
+      questionDes: "",
+      verifyCode: "",
+      verifyCodeImg: "",
     };
+  },
+  methods: {
+    async getQuestionList() {
+      const data = await getFeedBackList();
+      this.questionList = data.list.map((item) => {
+        return {
+          ...item,
+          text: item.category,
+          isCheck: false,
+        };
+      });
+    },
+    handleSelect(item) {
+      this.questionList = this.questionList.map((v) => {
+        return {
+          ...v,
+          isCheck: v._id === item._id ? true : false,
+        };
+      });
+      this.checkedQuestion = { ...item };
+      this.visiable = false;
+    },
+    handleClose() {
+      this.isShowVerify = false;
+    },
+    // 提交表单
+    onSubmit() {
+      if (!this.questionDes) return this.$toast("请输入描述~~");
+      if (!this.checkedQuestion) return this.$toast("请选择问题类型~~");
+      this.isShowVerify = true;
+    },
+    async handleSubmit() {
+      if (!this.verifyCode) return this.$toast("请输入验证码");
+      const addResult = await addFeedBack(
+        this.checkedQuestion.category,
+        this.getAddress,
+        this.questionDes,
+        this.verifyCode
+      );
+      if (!addResult) {
+        this.verifyCode = "";
+        this.getVerifyCodeImg();
+        return;
+      }
+      this.$toast("提交成功");
+      this.checkedQuestion = {};
+      this.questionDes = "";
+      this.isShowVerify = false;
+    },
+    getVerifyCodeImg: _.throttle(async function () {
+      this.verifyCodeImg = await getVerifyCode(this.getAddress, 2);
+    }, 2000),
+  },
+  async created() {
+    this.getQuestionList();
+    this.getVerifyCodeImg();
   },
 };
 </script>
@@ -164,7 +237,7 @@ export default {
         }
       }
       .active-question-list {
-        height: 285px;
+        height: 250px;
         overflow-y: scroll;
       }
     }

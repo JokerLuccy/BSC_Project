@@ -6,7 +6,7 @@
     <i @click="onClose" class="iconfont icona-chutubiao close"></i>
     <form @submit.prevent="onSubmit">
       <div class="title">验证</div>
-      <div class="verify-img"></div>
+      <div @click="onRefersh" ref="domVerify" class="verify-img"></div>
       <input
         type="text"
         :value="value"
@@ -30,6 +30,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    verifyImg: {
+      type: String,
+      default: "",
+    },
   },
   model: {
     prop: "value",
@@ -41,6 +45,18 @@ export default {
     },
     onClose() {
       this.$emit("close");
+    },
+    onRefersh() {
+      this.$emit("refersh");
+    },
+  },
+  watch: {
+    verifyImg: {
+      handler(newVal) {
+        this.$nextTick(() => {
+          this.$refs.domVerify.innerHTML = newVal;
+        });
+      },
     },
   },
 };
@@ -86,6 +102,9 @@ export default {
       box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.09);
       opacity: 1;
       border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     input {
       width: 251px;

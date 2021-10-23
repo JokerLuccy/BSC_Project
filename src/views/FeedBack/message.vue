@@ -2,53 +2,130 @@
   <div class="message">
     <ul class="message-list">
       <li
-        @click="goToDetail"
+        @click="isEditor ? handleSelect(item) : goToDetail(item)"
         class="message-list-item"
-        v-for="item in 100"
-        :key="item"
+        v-for="item in list"
+        :key="item._id"
       >
-        <img
-          v-if="isEditor"
-          src="../../assets/images/select.png"
-          alt=""
-          class="left"
-        />
+        <template v-if="isEditor">
+          <img
+            v-if="item.isCheck"
+            src="../../assets/images/select.png"
+            alt=""
+            class="left"
+          />
+          <img
+            v-else
+            src="../../assets/images/no-select.png"
+            alt=""
+            class="left"
+          />
+        </template>
         <div :class="!isEditor ? 'right' : 'active-right'">
           <div class="top">
-            <p class="title">基于2021-04-19 您反馈的消息馈的消息馈的消息</p>
-            <p class="time">04-19 13：22</p>
+            <p class="title">{{ item.content }}</p>
+            <p class="time">{{ item.createdAt }}</p>
           </div>
           <p class="content">
-            回复回复回复回复回复回复回复回复回复回复回复回复回复回复回复回复回复回复
+            {{ item.reply ? item.reply : "暂无回复" }}
           </p>
         </div>
       </li>
     </ul>
     <div v-if="isEditor" class="del-all">
       <div class="left">
-        <img src="../../assets/images/no-select.png" alt="" class="checkbox" />
+        <img
+          @click="delAll"
+          :src="
+            isDelAll
+              ? require('../../assets/images/select.png')
+              : require('../../assets/images/no-select.png')
+          "
+          alt=""
+          class="checkbox"
+        />
+
         全选
       </div>
-      <button class="del-btn">删除</button>
+      <button class="del-btn" @click="onSubmit">删除</button>
     </div>
   </div>
 </template>
 
 <script>
+import dayjs from "dayjs";
 import { mapState } from "vuex";
+import { delFeedBack, getQuestionList } from "../../server";
 export default {
   name: "Message",
+  data() {
+    return {
+      messageList: [],
+      current: 1,
+    };
+  },
   computed: {
     ...mapState({
       isEditor: (state) => state.status.isEditor,
     }),
+    list() {
+      return this.messageList;
+    },
+    delList() {
+      const delArr = [];
+      this.messageList.forEach((item) => {
+        if (item.isCheck) delArr.push(item._id);
+      });
+      return delArr;
+    },
+    isDelAll() {
+      let flag;
+      if (this.delList.length === this.messageList.length) {
+        flag = true;
+      } else {
+        flag = false;
+      }
+      return flag;
+    },
   },
+
   methods: {
-    goToDetail() {
+    async onSubmit() {
+      if (!this.delList.length) return this.$toast("请选择要删除的选项");
+      console.log(this.delList.join(","));
+      await delFeedBack(this.delList.join(","));
+      this.$store.commit("SET_EDITOR", false);
+      await this.getMessageList();
+    },
+    delAll() {
+      this.messageList = this.messageList.map((item) => {
+        return {
+          ...item,
+          isCheck: !this.isDelAll,
+        };
+      });
+    },
+    handleSelect(item) {
+      item.isCheck = !item.isCheck;
+    },
+    goToDetail(item) {
       if (!this.isEditor) {
-        this.$router.push("/message_detail");
+        this.$router.push(`/message_detail?id=${item._id}`);
       }
     },
+    async getMessageList() {
+      const data = await getQuestionList(this.getAddress, this.current);
+      this.messageList = data.list.map((item) => {
+        return {
+          ...item,
+          isCheck: false,
+          createdAt: dayjs(item.createdAt).format("MM-DD HH:mm"),
+        };
+      });
+    },
+  },
+  created() {
+    this.getMessageList();
   },
 };
 </script>
@@ -66,7 +143,6 @@ export default {
     display: flex;
     align-items: center;
     flex-direction: column;
-    justify-content: space-between;
     .message-list-item {
       flex-shrink: 0;
       width: 345px;

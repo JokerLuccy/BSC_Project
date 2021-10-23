@@ -2,6 +2,7 @@
   <div class="invite-table">
     <h4>邀请明细</h4>
     <van-list
+      v-if="list.length"
       class="invite-list"
       v-model="loading"
       :finished="finished"
@@ -12,16 +13,21 @@
         <p class="time">时间</p>
         <p class="address">地址</p>
       </div>
-      <div class="table-title-item" v-for="item in 100" :key="item">
-        <p class="time">三分钟前</p>
-        <p class="address">7124kj41j3h4jh135k1j24h1jh5</p>
+      <div class="table-title-item" v-for="item in list" :key="item._id">
+        <p class="time">{{ item.createdAt }}</p>
+        <p class="address">{{ item.address }}</p>
       </div>
     </van-list>
+    <no-data v-else />
   </div>
 </template>
 
 <script>
+import { recommendUsers } from "../../server/index";
+import * as timeago from "timeago.js";
+import NoData from "../../components/NoData.vue";
 export default {
+  components: { NoData },
   name: "InviteTable",
   data() {
     return {
@@ -48,6 +54,15 @@ export default {
         }
       }, 1000);
     },
+  },
+  async created() {
+    const data = await recommendUsers(this.getAddress);
+    this.list = data.list.map((item) => {
+      return {
+        ...item,
+        createdAt: timeago.format(item.createdAt, "zh_CN"),
+      };
+    });
   },
 };
 </script>

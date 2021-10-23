@@ -1,17 +1,27 @@
 <template>
   <div class="withdraw">
     <common-header title="提现" />
-    <form class="withdraw-form">
+    <form @submit.prevent="onWithdraw" class="withdraw-form">
       <div class="content">
         <label>
           提现地址
-          <input class="input" type="text" placeholder="请输入您要提现的地址" />
+          <input
+            v-model="withdrawAddress"
+            class="input"
+            type="text"
+            placeholder="请输入您要提现的地址"
+          />
           <br />
-          <input class="input" type="number" value="0.0" />
+          <input
+            v-model="withdrawAmount"
+            class="input"
+            type="number"
+            value="0.0"
+          />
           <div class="select">
             <div class="selected" @click="handleCoinList($event)">
-              <img src="../../assets/images/usdt.png" alt="" />
-              <span>USDT</span>
+              <img :src="selectAsset.imgSrc" alt="" />
+              <span>{{ selectAsset.name }}</span>
               <i
                 class="triangle iconfont iconsanjiaoxing"
                 :class="{
@@ -26,6 +36,7 @@
               }"
             >
               <li
+                @click="handleSelect(item)"
                 class="option-list-item"
                 v-for="item in optionList"
                 :key="item.imgSrc"
@@ -43,21 +54,15 @@
           <p>
             余额:<span>{{ withdrawInfo.slpBalance }} SLP</span>
           </p>
-          <p>最小数量:{{ withdrawInfo.usdtMinWithdraw }} USDT</p>
-          <p>手续费:{{ withdrawInfo.usdtFee }} USDT</p>
+          <p>最小提现数量:{{ getMinWithdraw.min }} USDT</p>
+          <p>手续费:{{ getMinWithdraw.fee }} USDT</p>
         </div>
       </div>
       <button class="withdraw-btn">提现</button>
     </form>
     <div class="withdraw-table">
       <h4>明细</h4>
-      <van-list
-        class="withdraw-list"
-        v-model="loading"
-        :finished="finished"
-        finished-text="没有更多了"
-        @load="onLoad"
-      >
+      <van-list class="withdraw-list">
         <div class="table-title">
           <p class="time">时间</p>
           <p class="count">数量</p>
@@ -73,11 +78,33 @@
       </van-list>
       <no-data v-if="false" />
     </div>
+    <van-dialog
+      className="dialog-pwd"
+      v-model="isShooDialog"
+      title="输入密码"
+      confirm-button-color="#0291FF"
+      confirm-button-text="支付"
+      cancel-button-color="#999999"
+      cancel-button-text="取消"
+      show-cancel-button
+      @confirm="onConfim"
+    >
+      <input
+        class="pay-pwd-input"
+        type="password"
+        placeholder="请输入您的支付密码~"
+        v-model="password"
+      />
+      <router-link to="/set_pwd?type=1" class="forget-pwd"
+        >忘记密码?</router-link
+      >
+    </van-dialog>
   </div>
 </template>
 
 <script>
 import CommonHeader from "../../components/CommonHeader.vue";
+import { getBalance, getWithdrawFee, withdraw } from "../../server";
 
 export default {
   components: { CommonHeader },
@@ -98,20 +125,93 @@ export default {
       ],
       visiable: false,
       withdrawInfo: {
-        usdtBalance: 123,
-        slpBalance: 123,
+        usdtBalance: 0,
+        slpBalance: 0,
         usdtMinWithdraw: 10,
         slpMinWithdraw: 20,
         usdtFee: 10,
         slpFee: 10,
       },
+      selectAsset: {
+        id: 0,
+        name: "USDT",
+        imgSrc: require("../../assets/images/usdt.png"),
+      },
+      withdrawAddress: "",
+      withdrawAmount: 0,
+      isShooDialog: false,
+      password: "",
     };
   },
+  computed: {
+    getMinWithdraw() {
+      if (this.selectAsset.id) {
+        return {
+          min: this.withdrawInfo.slpMinWithdraw,
+          fee: this.withdrawInfo.slpFee,
+        };
+      } else {
+        return {
+          min: this.withdrawInfo.usdtMinWithdraw,
+          fee: this.withdrawInfo.usdtFee,
+        };
+      }
+    },
+  },
   methods: {
+    async onConfim() {
+      await withdraw(
+        this.withdrawAddress,
+        this.selectAsset.name,
+        this.withdrawAmount,
+        this.password,
+        this.getAddress
+      );
+      await this.getAssetBalance();
+      this.withdrawAddress = "";
+      this.withdrawAmount = 0;
+      this.password = "";
+    },
+    onWithdraw() {
+      if (this.selectAsset.id === 0) {
+        if (!this.withdrawAddress) return this.$toast("请输入您要提现的地址");
+        if (this.withdrawAmount < this.getMinWithdraw.min)
+          return this.$toast(`最少提现${this.getMinWithdraw.min} USDT`);
+      }
+      if (this.selectAsset.id === 1) {
+        if (!this.withdrawAddress) return this.$toast("请输入您要提现的地址");
+        if (this.withdrawAmount < this.getMinWithdraw.min)
+          return this.$toast(`最少提现${this.getMinWithdraw.min} SLP`);
+      }
+      this.isShooDialog = true;
+      return false;
+    },
+    handleSelect(val) {
+      this.selectAsset = val;
+      this.visiable = !this.visiable;
+    },
     handleCoinList(event) {
       event.preventDefault();
       this.visiable = !this.visiable;
     },
+    async getAssetBalance() {
+      const usdtData = await getBalance(this.getAddress, "USDT");
+      const slpData = await getBalance(this.getAddress, "SLP");
+      this.withdrawInfo.usdtBalance = usdtData.available;
+      this.withdrawInfo.slpBalance = slpData.available;
+    },
+    async getFee() {
+      const usdtInfo = await getWithdrawFee("USDT");
+      const slpInfo = await getWithdrawFee("SLP");
+      this.withdrawInfo.usdtMinWithdraw = usdtInfo.min;
+      this.withdrawInfo.usdtFee = usdtInfo.fee;
+      this.withdrawInfo.slpMinWithdraw = slpInfo.min;
+      this.withdrawInfo.slpFee = slpInfo.fee;
+    },
+  },
+  async created() {
+    await this.getAssetBalance();
+    await this.getFee();
   },
 };
 </script>
@@ -319,6 +419,37 @@ export default {
           color: #0291ff;
         }
       }
+    }
+  }
+  .dialog-pwd {
+    .pay-pwd-input {
+      display: block;
+      border: none;
+      width: 265px;
+      height: 34px;
+      background: #f4f4f4;
+      opacity: 1;
+      border-radius: 5px;
+      margin: 0 auto;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      box-sizing: border-box;
+      padding-left: 10px;
+    }
+    .pay-pwd-input::placeholder {
+      color: #b5b5b5;
+    }
+    .forget-pwd {
+      display: block;
+      width: 100%;
+      text-align: right;
+      box-sizing: border-box;
+      padding-right: 15px;
+      padding-bottom: 10px;
+      font-size: 12px;
+      font-family: "PingFang SC";
+      font-weight: 400;
+      color: #0291ff;
     }
   }
 }

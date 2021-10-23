@@ -15,11 +15,12 @@ request.interceptors.request.use(
 );
 request.interceptors.response.use(
   (response) => {
-    if (response.status === 200) {
+    Nprogress.done();
+    if (response.status === 201) {
       if (response.data.code) {
-        Toast.fail(response.data.message);
+        Toast.fail(response.data.msg);
+        return false;
       } else {
-        console.log(response);
         return Promise.resolve(response.data.data);
       }
     }

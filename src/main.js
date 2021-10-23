@@ -9,7 +9,8 @@ import "vant/lib/index.css";
 import "./assets/icons/iconfont.css";
 import "animate.css";
 import VueLazyLoad from "vue-lazyload";
-import { Progress, Divider, List, Overlay, Dialog, Toast } from "vant";
+import VueClipboard from "vue-clipboard2";
+import { Progress, Divider, List, Overlay, Dialog, Toast, Loading } from "vant";
 import { mapState } from "vuex";
 Vue.use(VueLazyLoad);
 Vue.use(Progress);
@@ -18,6 +19,8 @@ Vue.use(List);
 Vue.use(Overlay);
 Vue.use(Dialog);
 Vue.use(Toast);
+Vue.use(Loading);
+Vue.use(VueClipboard);
 Vue.config.productionTip = false;
 Vue.mixin({
   computed: {
@@ -27,10 +30,11 @@ Vue.mixin({
     },
   },
 });
-if (process.env.NODE_ENV === "development") {
-  const VConsole = require("vconsole");
-  new VConsole();
-}
+
+// if (process.env.NODE_ENV === "development") {
+//   const VConsole = require("vconsole");
+//   new VConsole();
+// }
 new Vue({
   router,
   store,

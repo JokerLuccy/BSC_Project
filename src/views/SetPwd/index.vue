@@ -1,24 +1,39 @@
 <template>
   <div class="set-pwd">
     <common-header to="/home" title="设置密码" />
-    <form>
-      <label class="pay-pwd">
+    <div class="form">
+      <div class="pay-pwd">
         支付密码
-        <input class="input" type="password" placeholder="请输入支付密码" />
-        <i class="iconfont iconkejian"></i>
-      </label>
-      <label class="pay-again">
+        <input
+          v-model.trim="payPwd"
+          class="input"
+          :type="visiable ? 'text' : 'password'"
+          placeholder="请输入支付密码"
+        />
+        <i @click="visiable = !visiable" class="iconfont iconkejian"></i>
+      </div>
+      <div class="pay-again">
         再次输入
-        <input class="input" type="password" placeholder="请再次输入密码~" />
-      </label>
-      <lable class="verify-code">
+        <input
+          v-model="payPwdAgin"
+          class="input"
+          :type="visiable ? 'text' : 'password'"
+          placeholder="请再次输入密码~"
+        />
+      </div>
+      <div class="verify-code">
         验证码
         <div class="inputs">
-          <input type="text" class="input-verify" placeholder="请输入验证码" />
-
-          <div class="verify-img"><a>刷新图片</a></div>
+          <input
+            v-model="verifyCode"
+            type="text"
+            class="input-verify"
+            placeholder="请输入验证码"
+          />
+          <a @click="getVerifyCodeImg">刷新图片</a>
+          <div ref="domVerify" class="verify-img"></div>
         </div>
-      </lable>
+      </div>
       <div class="tips">
         <p>
           <i class="iconfont icongantanhaotishi"></i>
@@ -29,23 +44,54 @@
           一定谨记住您的密码，如果丢失或有疑问请联系客服。
         </p>
       </div>
-      <button class="confirm-btn">确认</button>
-    </form>
+      <button @click="onSubmit($event)" class="confirm-btn">确认</button>
+    </div>
   </div>
 </template>
 
 <script>
 import CommonHeader from "../../components/CommonHeader.vue";
+import { getVerifyCode, setPwd } from "../../server";
 export default {
   components: { CommonHeader },
   name: "SetPwd",
+  data() {
+    return {
+      payPwd: "",
+      payPwdAgin: "",
+      verifyCode: "",
+      visiable: false,
+    };
+  },
+  methods: {
+    async onSubmit() {
+      if (this.$route.query.type === "0") {
+        if (!this.payPwd.length) return this.$toast("请输入支付密码");
+        if (!this.payPwdAgin.length) return this.$toast("请再次输入密码");
+        if (this.payPwd !== this.payPwdAgin)
+          return this.$toast("两次密码输入不同");
+        if (!this.verifyCode.length) return this.$toast("请输入验证码");
+        await setPwd(this.getAddress, this.verifyCode, this.payPwd);
+        this.$router.push("/home");
+      }
+    },
+    async getVerifyCodeImg() {
+      const data = await getVerifyCode(this.getAddress, 7);
+      this.$nextTick(() => {
+        this.$refs.domVerify.innerHTML = data;
+      });
+    },
+  },
+  created() {
+    this.getVerifyCodeImg();
+  },
 };
 </script>
 <style lang="less" scoped>
 .set-pwd {
   width: 100%;
   height: 100%;
-  form {
+  .form {
     width: 100%;
     display: flex;
     align-items: flex-start;
@@ -96,6 +142,7 @@ export default {
         display: flex;
         align-items: center;
         flex-direction: column;
+        position: relative;
         .input-verify {
           border: none;
           width: 205px;
@@ -113,17 +160,18 @@ export default {
           background: #e8ecf1;
           opacity: 1;
           border-radius: 5px;
-          position: relative;
-          a {
-            position: absolute;
-            bottom: 0;
-            left: -50px;
-            font-size: 12px;
-            font-family: "PingFang SC";
-            font-weight: 400;
-            color: #0291ff;
-            text-decoration: underline;
-          }
+          text-align: center;
+          line-height: 60px;
+        }
+        a {
+          position: absolute;
+          bottom: 0;
+          left: -50px;
+          font-size: 12px;
+          font-family: "PingFang SC";
+          font-weight: 400;
+          color: #0291ff;
+          text-decoration: underline;
         }
       }
     }

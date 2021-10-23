@@ -4,12 +4,17 @@
     <div class="content">
       <div class="divider"></div>
       <div class="my-info">
-        <p>Https://filprominer.com/660407com/660407com/660407</p>
-        <i class="iconfont iconfuzhi copy"></i>
+        <p>{{ linkUrl }}</p>
+        <i
+          v-clipboard:copy="linkUrl"
+          v-clipboard:success="firstCopySuccess"
+          v-clipboard:error="firstCopyError"
+          class="iconfont iconfuzhi copy"
+        ></i>
       </div>
       <div class="my-qrcode">
         <div class="my-qrcode-title">你的二维码</div>
-        <div class="qrcode-img"></div>
+        <div ref="qrcodeRef" class="qrcode-img"></div>
       </div>
       <div class="my-address">
         <div class="my-address-title">你的钱包地址</div>
@@ -22,8 +27,43 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+import { qrcanvas } from "qrcanvas";
 export default {
   name: "ReferLink",
+  computed: {
+    ...mapState({ userInfo: (state) => state.common.userInfo }),
+    linkUrl() {
+      let str = "";
+      str =
+        (window.location.host.startsWith("192") ? "http://" : "https://") +
+        window.location.host +
+        `/login?code=${this.userInfo.code}&time=${Date.now()}`;
+      return str;
+    },
+  },
+  methods: {
+    // 初始化二维码
+    initQrcode() {
+      const canvas = qrcanvas({
+        data: this.linkUrl,
+        size: 64,
+      });
+      this.$refs.qrcodeRef.innerHTML = "";
+      this.$refs.qrcodeRef.appendChild(canvas);
+    },
+    // 复制成功
+    firstCopySuccess() {
+      this.$toast("复制成功");
+    },
+    firstCopyError() {
+      this.$toast("该设备不支持复制");
+    },
+  },
+  mounted() {
+    this.initQrcode();
+    this.$store.dispatch("getUserInfo", { address: this.getAddress });
+  },
 };
 </script>
 
@@ -79,7 +119,7 @@ export default {
         font-family: "PingFang SC";
         font-weight: 500;
         color: #1e262f;
-        opacity: 1;
+        white-space: nowrap;
       }
       .copy {
         margin-left: 10px;
@@ -103,7 +143,6 @@ export default {
         margin-top: 13px;
         width: 64px;
         height: 64px;
-        background: #000000;
         opacity: 1;
       }
       .my-address-content {

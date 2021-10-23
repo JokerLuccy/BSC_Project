@@ -44,8 +44,7 @@ export default {
           const isRegister = await checkRegister(testAddress);
           isRegister
             ? this.$router.push("/home")
-            : this.$router.push("/register");
-          this.$router.push("/register");
+            : this.$router.push(`/register?code=${this.$route.query.code}`);
         }
         if (process.env.NODE_ENV === "production") {
           this.$toast("请在TokenPocket钱包中打开");

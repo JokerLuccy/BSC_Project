@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
 import Footer from "../../components/Footer.vue";
 import HomeHeader from "../../components/HomeHeader.vue";
 import Accounts from "./Accounts.vue";
@@ -29,6 +30,16 @@ export default {
     Notice,
   },
   name: "Home",
+  computed: {
+    ...mapState({ userInfo: (state) => state.common.userInfo }),
+  },
+  methods: {
+    ...mapActions(["getUserInfo"]),
+  },
+  async created() {
+    await this.getUserInfo({ address: this.getAddress });
+    if (!this.userInfo.hasPassword) this.$router.push("/set_pwd?type=0");
+  },
 };
 </script>
 

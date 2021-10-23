@@ -7,12 +7,16 @@
       </div>
       <img class="lang-img" src="../../assets/images/cn-blue.png" />
     </header>
-    <!-- 02xd9****B9f6 -->
     <div class="address">
       {{ getAddress.slice(0, 5) + "****" + getAddress.slice(-4) }}
     </div>
-    <form @submit.prevent="visiable = true">
-      <input class="input-invite" type="text" placeholder="请输入邀请码" />
+    <form @submit.prevent="onShowVerify">
+      <input
+        class="input-invite"
+        v-model.trim="referCode"
+        type="text"
+        placeholder="请输入邀请码"
+      />
       <br />
       <button class="confirm-btn">确认</button>
     </form>
@@ -20,7 +24,9 @@
       :visiable="visiable"
       @close="handleClose"
       @click="handleSubmit"
-      v-model="verifyCode"
+      @refersh="getVerifyCodeImg"
+      v-model.trim="verifyCode"
+      :verifyImg="verifyCodeImg"
     />
   </div>
 </template>
@@ -28,6 +34,8 @@
 <script>
 import VerifyCode from "../../components/VerifyCode.vue";
 import { logoImg } from "../../config/constants";
+import { getVerifyCode, register } from "../../server/index";
+import _ from "lodash";
 export default {
   components: { VerifyCode },
   name: "Register",
@@ -36,19 +44,43 @@ export default {
       logoImg: logoImg,
       verifyCode: "",
       visiable: false,
+      verifyCodeImg: "",
+      referCode: "",
     };
   },
 
   methods: {
-    handleSubmit() {
+    async handleSubmit() {
+      if (!this.verifyCode) return this.$toast("请输入验证码");
+      const registerResult = await register(
+        this.getAddress,
+        this.verifyCode,
+        this.referCode
+      );
+      if (!registerResult) {
+        this.verifyCode = "";
+        this.referCode = "";
+        this.visiable = false;
+        this.verifyCodeImg = await getVerifyCode(this.getAddress, 1);
+        return;
+      }
       this.visiable = false;
       this.$router.push("/home");
-      console.log("提交成功");
     },
     handleClose() {
       this.visiable = false;
-      console.log("关闭");
     },
+    getVerifyCodeImg: _.throttle(async function () {
+      this.verifyCodeImg = await getVerifyCode(this.getAddress, 1);
+    }, 2000),
+    onShowVerify: _.throttle(function () {
+      if (!this.referCode) return this.$toast("请输入邀请码");
+      this.visiable = true;
+    }, 2000),
+  },
+  async created() {
+    this.referCode = this.$route.query.code;
+    await this.getVerifyCodeImg();
   },
 };
 </script>
