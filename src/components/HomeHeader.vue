@@ -32,13 +32,13 @@
 </template>
 
 <script>
-import constants from "../config/constants";
+import { logoImg } from "../config/constants";
 export default {
   name: "HomeHeader",
   data() {
     return {
       visiable: false,
-      logoImg: constants.logoImg,
+      logoImg: Object.freeze(logoImg),
       categoryList: Object.freeze([
         { path: "/home", name: "首页" },
         { path: "/withdraw", name: "提现" },

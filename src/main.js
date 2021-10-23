@@ -9,7 +9,6 @@ import "vant/lib/index.css";
 import "./assets/icons/iconfont.css";
 import "animate.css";
 import VueLazyLoad from "vue-lazyload";
-import VConsole from "vconsole";
 import { Progress, Divider, List, Overlay, Dialog, Toast } from "vant";
 import { mapState } from "vuex";
 Vue.use(VueLazyLoad);
@@ -28,7 +27,10 @@ Vue.mixin({
     },
   },
 });
-new VConsole();
+if (process.env.NODE_ENV === "development") {
+  const VConsole = require("vconsole");
+  new VConsole();
+}
 new Vue({
   router,
   store,

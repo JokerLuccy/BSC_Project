@@ -44,12 +44,12 @@
 </template>
 
 <script>
-import constants from "../../config/constants";
+import { logoImg } from "../../config/constants";
 export default {
   name: "Notice",
   data() {
     return {
-      logoImg: Object.freeze(constants.logoImg),
+      logoImg: Object.freeze(logoImg),
       visiable: false,
     };
   },

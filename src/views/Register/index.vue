@@ -27,13 +27,13 @@
 
 <script>
 import VerifyCode from "../../components/VerifyCode.vue";
-import constants from "../../config/constants";
+import { logoImg } from "../../config/constants";
 export default {
   components: { VerifyCode },
   name: "Register",
   data() {
     return {
-      logoImg: constants.logoImg,
+      logoImg: logoImg,
       verifyCode: "",
       visiable: false,
     };

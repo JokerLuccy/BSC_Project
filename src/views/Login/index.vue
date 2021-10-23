@@ -13,13 +13,13 @@
 
 <script>
 import { mapMutations } from "vuex";
-import constants from "../../config/constants";
+import { logoImg, testAddress } from "../../config/constants";
 import { getWalletAddress, isWhichPlat } from "../../utils/wallet";
 export default {
   name: "Login",
   data() {
     return {
-      logoImg: constants.logoImg,
+      logoImg: logoImg,
     };
   },
   methods: {
@@ -35,7 +35,13 @@ export default {
           this.$toast("请选择钱包");
         }
       } else {
-        this.$toast("请在TokenPocket钱包中打开");
+        if (process.env.NODE_ENV === "development") {
+          this.SET_ADDRESS(testAddress);
+          this.$router.push("/register");
+        }
+        if (process.env.NODE_ENV === "production") {
+          this.$toast("请在TokenPocket钱包中打开");
+        }
       }
     },
   },
