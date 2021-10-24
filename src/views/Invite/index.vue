@@ -2,7 +2,11 @@
   <div class="invite">
     <common-header title="邀请好友" />
     <InviteDescription />
-    <img v-lazy="require('../../assets/images/invite-sign.png')" alt="" />
+    <img
+      class="invite-sign"
+      v-lazy="require('../../assets/images/invite-sign.png')"
+      alt=""
+    />
     <refer-link />
     <inviet-table />
   </div>
@@ -25,5 +29,12 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  padding-bottom: 30px;
+  .invite-sign {
+    width: 100%;
+    height: 139px;
+    flex-shrink: 0;
+  }
 }
 </style>

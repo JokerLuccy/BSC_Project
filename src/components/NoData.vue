@@ -22,7 +22,7 @@ export default {
   align-items: center;
   justify-content: center;
   .content {
-    width: 297px;
+    width: 200px;
     height: 220px;
     background-image: url("../assets/images/no-data.png");
     background-size: cover;

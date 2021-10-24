@@ -54,8 +54,8 @@
           <p>
             余额:<span>{{ withdrawInfo.slpBalance }} SLP</span>
           </p>
-          <p>最小提现数量:{{ getMinWithdraw.min }} USDT</p>
-          <p>手续费:{{ getMinWithdraw.fee }} USDT</p>
+          <p>最小提现数量:{{ getMinWithdraw.min }} {{ selectAsset.name }}</p>
+          <p>手续费:{{ getMinWithdraw.fee }} {{ selectAsset.name }}</p>
         </div>
       </div>
       <button class="withdraw-btn">提现</button>

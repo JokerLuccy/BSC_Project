@@ -87,11 +87,13 @@ export default {
       font-weight: 400;
       color: #1e262f;
       margin-bottom: 10px;
-      line-height: 17px;
+      line-height: 20px;
       .correct {
+        margin-top: 5px;
         width: 16px;
         height: 16px;
         margin-right: 10px;
+        flex-shrink: 0;
       }
     }
   }

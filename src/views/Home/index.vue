@@ -4,7 +4,7 @@
     <introduce />
     <contract />
     <accounts />
-    <browser />
+    <!-- <browser /> -->
     <Footer />
     <notice />
   </div>
@@ -15,7 +15,7 @@ import { mapActions, mapState } from "vuex";
 import Footer from "../../components/Footer.vue";
 import HomeHeader from "../../components/HomeHeader.vue";
 import Accounts from "./Accounts.vue";
-import Browser from "./Browser.vue";
+// import Browser from "./Browser.vue";
 import Contract from "./Contract.vue";
 import Introduce from "./Introduce.vue";
 import Notice from "./Notice.vue";
@@ -25,7 +25,6 @@ export default {
     Introduce,
     Contract,
     Accounts,
-    Browser,
     Footer,
     Notice,
   },

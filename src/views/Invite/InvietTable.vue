@@ -74,6 +74,8 @@ export default {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
+  box-sizing: border-box;
+  padding-bottom: 30px;
   h4 {
     box-sizing: border-box;
     padding-top: 20px;
