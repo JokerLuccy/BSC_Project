@@ -143,6 +143,8 @@ export default {
     display: flex;
     align-items: center;
     flex-direction: column;
+    box-sizing: border-box;
+    padding-top: 10px;
     .message-list-item {
       flex-shrink: 0;
       width: 345px;

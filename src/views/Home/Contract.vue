@@ -36,15 +36,15 @@
           </li>
           <li class="info-list-item">
             <span class="name">铸造创立</span>
-            <span class="value">T+7</span>
+            <span class="value">T+{{ currentTitle ? "1" : "7" }}</span>
           </li>
           <li class="info-list-item">
             <span class="name">账面收益</span>
-            <span class="value">T+7+21</span>
+            <span class="value">T+{{ currentTitle ? "1" : "7" }}+21</span>
           </li>
           <li class="info-list-item">
             <span class="name">收益领取</span>
-            <span class="value">T+7+21+15</span>
+            <span class="value">T+{{ currentTitle ? "1" : "7" }}+21+15</span>
           </li>
           <li class="info-list-item">
             <span class="name">管理费用</span>

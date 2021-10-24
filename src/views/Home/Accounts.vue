@@ -44,7 +44,7 @@ export default {
       accounsList: [
         { name: "总投入", count: 0, unit: "USDT" },
         { name: "社区收益", count: 0, unit: "USDT" },
-        { name: "合约收益", count: 0, unit: "USDT" },
+        { name: "合约收益", count: 0, unit: "SLP" },
         { name: "提现数量", count: 0, unit: "SLP" },
       ],
     };

@@ -20,7 +20,7 @@
         </div>
         <div class="table-title-item" v-for="item in list" :key="item.id">
           <p class="time">{{ item.createdAt }}</p>
-          <p class="comput-power">168 USDT</p>
+          <p class="comput-power">{{ item.usdt }} USDT</p>
           <p class="share">{{ item.num }}</p>
           <p class="type">
             {{ item.minerType === 1 || item.minerType === 2 ? "期货" : "现货" }}

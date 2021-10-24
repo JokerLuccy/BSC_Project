@@ -5,7 +5,7 @@
       灵犀MAX
     </div>
     <div class="bottom">
-      元宇宙链游专业设备
+      元宇宙链游合约
       <img
         @click="visiable = !visiable"
         v-lazy="require('../assets/images/category.png')"
@@ -47,6 +47,7 @@ export default {
         { path: "/game_assets", name: "游戏资产" },
         { path: "/invite", name: "邀请好友" },
         { path: "/feedback", name: "用户反馈" },
+        { path: "/set_pwd?type=1", name: "修改密码" },
       ]),
     };
   },
