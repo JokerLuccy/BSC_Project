@@ -26,7 +26,9 @@
           </label>
         </li>
       </ul>
-      <button class="account-btn">账户详情</button>
+      <button class="account-btn" @click="$router.push('/account_detail')">
+        账户详情
+      </button>
     </div>
   </div>
 </template>

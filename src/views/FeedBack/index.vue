@@ -47,6 +47,7 @@ export default {
 .feedback {
   width: 100%;
   height: 100%;
+  overflow: auto;
   .common-header {
     .message {
       position: absolute;

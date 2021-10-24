@@ -77,7 +77,17 @@ function withdraw(addressTo, asset, amount, password, address) {
 function recommendUsers(address) {
   return http.post("/user/recommendUsers", { address, current: 1, limit: 30 });
 }
+// 最新公告id
+function last() {
+  return http.post("/news/last", {});
+}
+// 获取最新公告
+function list(id) {
+  return http.post("/news/list", { id });
+}
 export {
+  last,
+  list,
   recommendUsers,
   withdraw,
   getWithdrawFee,

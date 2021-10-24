@@ -31,10 +31,10 @@ Vue.mixin({
   },
 });
 
-// if (process.env.NODE_ENV === "development") {
-//   const VConsole = require("vconsole");
-//   new VConsole();
-// }
+if (process.env.NODE_ENV === "development") {
+  const VConsole = require("vconsole");
+  new VConsole();
+}
 new Vue({
   router,
   store,

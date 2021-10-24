@@ -34,7 +34,7 @@ export default {
           const isRegister = await checkRegister(data.address);
           isRegister
             ? this.$router.push("/home")
-            : this.$router.push("/register");
+            : this.$router.push(`/register?code=${this.$route.query.code}`);
         } else {
           this.$toast("请选择钱包");
         }

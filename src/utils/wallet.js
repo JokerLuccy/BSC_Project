@@ -27,6 +27,7 @@ class BSC {
     const signer = _signer();
     const contract = new ethers.Contract(usdtAddress, usdtABI, signer);
     const balance = await contract.balanceOf(address);
+    console.log("usdtBalance", Number(ethers.utils.formatEther(balance)));
     return Number(ethers.utils.formatEther(balance));
   }
   async transferUsdt(toAddress, amount) {

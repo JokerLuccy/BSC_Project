@@ -210,7 +210,8 @@ export default {
       this.currentTitle = val.id;
     },
     async onBought() {
-      if (this.usdtBalance < bnbLimit) return this.$toast("BNB余额不足");
+      console.log(this.bnbBalance);
+      if (this.bnbBalance < bnbLimit) return this.$toast("BNB余额不足");
       if (this.usdtBalance < this.needTotalPay)
         return this.$toast("USDT余额不足");
       const toast = Toast.loading({
