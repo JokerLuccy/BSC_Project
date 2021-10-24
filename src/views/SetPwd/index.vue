@@ -119,7 +119,6 @@ export default {
     flex-direction: column;
     box-sizing: border-box;
     padding: 15px;
-
     .pay-pwd,
     .pay-again {
       font-size: 15px;
@@ -131,7 +130,7 @@ export default {
       box-sizing: border-box;
       padding-bottom: 10px;
       .input {
-        margin-left: 79px;
+        margin-left: 70px;
         width: 162px;
         border: none;
       }
@@ -144,7 +143,6 @@ export default {
       }
     }
     .pay-again {
-      height: 41px;
       box-sizing: border-box;
       padding-top: 10px;
     }
@@ -226,7 +224,7 @@ export default {
       line-height: 45px;
       text-align: center;
       color: #ffffff;
-      margin-top: 300px;
+      margin-top: 250px;
     }
   }
 }
