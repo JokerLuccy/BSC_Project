@@ -35,18 +35,26 @@
 
 <script>
 import Sign from "../../components/Sign.vue";
+import { rewardSum } from "../../server/index";
 export default {
   components: { Sign },
   name: "Accounts",
   data() {
     return {
       accounsList: [
-        { name: "总投入", count: 7762.45, unit: "USDT" },
-        { name: "社区收益", count: 7762.45, unit: "USDT" },
-        { name: "合约收益", count: 7762.45, unit: "USDT" },
-        { name: "提现数量", count: 7762.45, unit: "SLP" },
+        { name: "总投入", count: 0, unit: "USDT" },
+        { name: "社区收益", count: 0, unit: "USDT" },
+        { name: "合约收益", count: 0, unit: "USDT" },
+        { name: "提现数量", count: 0, unit: "SLP" },
       ],
     };
+  },
+  async created() {
+    const data = await rewardSum(this.getAddress);
+    this.accounsList[0].count = data.investmentSum;
+    this.accounsList[1].count = data.teamReward;
+    this.accounsList[2].count = data.contractReward;
+    this.accounsList[3].count = data.withdrawSum;
   },
 };
 </script>

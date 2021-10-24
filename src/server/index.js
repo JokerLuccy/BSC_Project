@@ -85,7 +85,47 @@ function last() {
 function list(id) {
   return http.post("/news/list", { id });
 }
+// 修改密码
+function editPassword(address, verifyCode, password, newPassword) {
+  return http.post("/user/editPassword", {
+    address,
+    verifyCode,
+    password,
+    newPassword,
+  });
+}
+// 账号奖励信息
+function rewardSum(address) {
+  return http.post("/wallet/rewardSum", { address });
+}
+// 奖励记录
+function rewardRecord(address, current) {
+  return http.post("/wallet/rewardRecord", { address, current, limit: 30 });
+}
+// 游戏资产,奖励明细
+function minerRewardRecord(address, id, current) {
+  return http.post("/wallet/minerRewardRecord", {
+    address,
+    id,
+    current,
+    limit: 30,
+  });
+}
+// 获取用户提现记录
+function withdrawRecord(address, current, asset) {
+  return http.post("/wallet/withdrawRecord", {
+    address,
+    current,
+    limit: 30,
+    asset,
+  });
+}
 export {
+  withdrawRecord,
+  minerRewardRecord,
+  rewardRecord,
+  rewardSum,
+  editPassword,
   last,
   list,
   recommendUsers,

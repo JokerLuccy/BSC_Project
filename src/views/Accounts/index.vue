@@ -1,11 +1,11 @@
 <template>
   <div class="accounts">
     <common-header title="账户详情" />
-    <cumulative-card title="累计：" />
+    <cumulative-card title="累计：" :amount="amountSum.toFixed(4)" />
     <div class="account-table">
       <h4>明细</h4>
       <van-list
-        v-if="false"
+        v-if="list.length"
         class="account-list"
         v-model="loading"
         :finished="finished"
@@ -18,14 +18,16 @@
           <p class="share">份额</p>
           <p class="type">类型</p>
         </div>
-        <div class="table-title-item" v-for="item in 100" :key="item">
-          <p class="time">3分钟前</p>
+        <div class="table-title-item" v-for="item in list" :key="item.id">
+          <p class="time">{{ item.createdAt }}</p>
           <p class="comput-power">168 USDT</p>
-          <p class="share">1</p>
-          <p class="type">期货</p>
+          <p class="share">{{ item.num }}</p>
+          <p class="type">
+            {{ item.minerType === 1 || item.minerType === 2 ? "期货" : "现货" }}
+          </p>
         </div>
       </van-list>
-      <no-data />
+      <no-data v-else />
     </div>
   </div>
 </template>
@@ -34,6 +36,8 @@
 import CommonHeader from "../../components/CommonHeader.vue";
 import CumulativeCard from "../../components/CumulativeCard.vue";
 import NoData from "../../components/NoData.vue";
+import { myMinePlay } from "../../server/index";
+import * as timeago from "timeago.js";
 export default {
   name: "Accounts",
   components: { CommonHeader, CumulativeCard, NoData },
@@ -42,26 +46,33 @@ export default {
       list: [],
       loading: false,
       finished: true,
+      amountSum: 0,
+      current: 1,
     };
   },
   methods: {
-    onLoad() {
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-
-        // 加载状态结束
-        this.loading = false;
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
-        }
-      }, 1000);
+    async onLoad() {
+      this.current = this.current + 1;
+      const data = await myMinePlay(this.getAddress);
+      const arr = [...this.list, ...data.list];
+      this.loading = false;
+      if (this.list.length === arr.length) {
+        this.finished = true;
+      }
     },
+    async getMyminerPlay() {
+      const data = await myMinePlay(this.getAddress);
+      this.amountSum = data.amountSum;
+      this.list = data.list.map((item) => {
+        return {
+          ...item,
+          createdAt: timeago.format(item.createdAt, "zh_CN"),
+        };
+      });
+    },
+  },
+  async created() {
+    await this.getMyminerPlay();
   },
 };
 </script>

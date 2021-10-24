@@ -12,6 +12,15 @@
         />
         <i @click="visiable = !visiable" class="iconfont iconkejian"></i>
       </div>
+      <div v-show="$route.query.type === '1'" class="pay-again">
+        新的密码
+        <input
+          v-model="newPwd"
+          class="input"
+          :type="visiable ? 'text' : 'password'"
+          placeholder="请输入新密码~"
+        />
+      </div>
       <div class="pay-again">
         再次输入
         <input
@@ -51,7 +60,7 @@
 
 <script>
 import CommonHeader from "../../components/CommonHeader.vue";
-import { getVerifyCode, setPwd } from "../../server";
+import { editPassword, getVerifyCode, setPwd } from "../../server";
 export default {
   components: { CommonHeader },
   name: "SetPwd",
@@ -61,18 +70,30 @@ export default {
       payPwdAgin: "",
       verifyCode: "",
       visiable: false,
+      newPwd: "",
     };
   },
   methods: {
     async onSubmit() {
+      if (!this.payPwd.length) return this.$toast("请输入支付密码");
+      if (!this.payPwdAgin.length) return this.$toast("请再次输入密码");
+      if (!this.verifyCode.length) return this.$toast("请输入验证码");
       if (this.$route.query.type === "0") {
-        if (!this.payPwd.length) return this.$toast("请输入支付密码");
-        if (!this.payPwdAgin.length) return this.$toast("请再次输入密码");
         if (this.payPwd !== this.payPwdAgin)
           return this.$toast("两次密码输入不同");
-        if (!this.verifyCode.length) return this.$toast("请输入验证码");
         await setPwd(this.getAddress, this.verifyCode, this.payPwd);
         this.$router.push("/home");
+      }
+      if (this.$route.query.type === "1") {
+        if (this.newPwd !== this.payPwdAgin)
+          return this.$toast("两次密码输入不同");
+        const editResult = await editPassword(
+          this.getAddress,
+          this.verifyCode,
+          this.payPwd,
+          this.newPwd
+        );
+        if (editResult) this.$toast("修改成功");
       }
     },
     async getVerifyCodeImg() {

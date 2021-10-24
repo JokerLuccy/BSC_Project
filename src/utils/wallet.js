@@ -20,14 +20,12 @@ class BSC {
   async getBnBalance(address) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const balance = await provider.getBalance(address);
-    console.log("bnbBalance", Number(ethers.utils.formatEther(balance)));
     return Number(ethers.utils.formatEther(balance));
   }
   async getUsdtBalance(address) {
     const signer = _signer();
     const contract = new ethers.Contract(usdtAddress, usdtABI, signer);
     const balance = await contract.balanceOf(address);
-    console.log("usdtBalance", Number(ethers.utils.formatEther(balance)));
     return Number(ethers.utils.formatEther(balance));
   }
   async transferUsdt(toAddress, amount) {

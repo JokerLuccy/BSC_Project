@@ -3,34 +3,34 @@
     <common-header title="游戏资产" />
     <ul class="title-list">
       <li
-        @click="currentIndex = item.id"
+        @click="handleSelect(item)"
         :class="{
           'list-item': 'list-item',
           'active-list-item':
             currentIndex === item.id ? 'active-list-item' : '',
         }"
-        v-for="item in titleList"
-        :key="item.text"
+        v-for="item in list"
+        :key="item.id"
       >
-        {{ item.text }}
+        {{ item.name }}
       </li>
     </ul>
     <div class="game-card">
       <div class="left">
         <p class="top">累计</p>
-        <p class="center">{{ amountSum }} SLP</p>
+        <p class="center">{{ seleceted.rewarded }} SLP</p>
         <p class="bottom">{{ nowDate }}</p>
       </div>
       <div class="right">
         <p class="top">可提取</p>
-        <p class="center">{{ extractCount }}SLP</p>
+        <p class="center">{{ seleceted.extract }}SLP</p>
         <button @click="handleExtract" class="bottom">提取</button>
       </div>
     </div>
     <div class="game-table">
       <h4>明细</h4>
       <van-list
-        v-if="filterList.length"
+        v-if="assetList.length"
         class="game-list"
         v-model="loading"
         :finished="finished"
@@ -39,12 +39,12 @@
       >
         <div class="table-title">
           <p class="time">时间</p>
-          <p class="coin">USDT</p>
+          <p class="coin">SLP</p>
           <p class="status">状态</p>
         </div>
-        <div class="table-title-item" v-for="item in filterList" :key="item.id">
+        <div class="table-title-item" v-for="item in assetList" :key="item._id">
           <p class="time">{{ item.createdAt }}</p>
-          <p class="coin">{{ item.rewarded }}</p>
+          <p class="coin">{{ item.amount }}</p>
           <p class="status">已发放</p>
         </div>
       </van-list>
@@ -57,78 +57,65 @@
 import * as timeago from "timeago.js";
 import dayjs from "dayjs";
 import CommonHeader from "../../components/CommonHeader.vue";
-import { extract, myMinePlay } from "../../server";
+import { minerRewardRecord, extract, myMinePlay } from "../../server";
 import NoData from "../../components/NoData.vue";
 export default {
   components: { CommonHeader, NoData },
   name: "GameAsset",
   data() {
     return {
-      titleList: Object.freeze([
-        { id: 0, text: "期货合约(初级)" },
-        { id: 1, text: "期货合约(高级)" },
-        { id: 2, text: "现货合约(初级)" },
-        { id: 3, text: "现货合约(高级))" },
-      ]),
       list: [],
       loading: false,
       finished: true,
-      currentIndex: 0,
+      currentIndex: "",
       amountSum: 0,
+      seleceted: {},
+      rewardList: [],
+      current: 1,
+      assetList: [],
     };
   },
   computed: {
     nowDate() {
       return dayjs(Date.now()).format("YYYY-MM-DD");
     },
-    filterList() {
-      switch (this.currentIndex) {
-        case 0:
-          return this.list.filter((item) => item.minerType === 1);
-        case 1:
-          return this.list.filter((item) => item.minerType === 2);
-        case 2:
-          return this.list.filter((item) => item.minerType === 3);
-        case 3:
-          return this.list.filter((item) => item.minerType === 4);
-        default:
-          return [];
-      }
-    },
-    extractCount() {
-      try {
-        return this.filterList[0].extract;
-      } catch (error) {
-        return 0;
-      }
-    },
   },
   methods: {
-    onLoad() {
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-
-        // 加载状态结束
-        this.loading = false;
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
-        }
-      }, 1000);
+    async onLoad() {
+      this.current = this.current + 1;
+      const data = await minerRewardRecord(
+        this.getAddress,
+        this.seleceted.id,
+        this.current
+      );
+      this.loading = false;
+      const arr = [...this.assetList, ...data.list];
+      if (this.list.length === arr.length) {
+        this.finished = true;
+      }
+    },
+    async handleSelect(item) {
+      this.currentIndex = item.id;
+      this.seleceted = item;
+      await this.getRewardList();
     },
     async handleExtract() {
-      await extract(this.getAddress, this.filterList[0].id);
+      await extract(this.getAddress, this.seleceted.id);
       await this.getMyMinerPlay();
     },
     async getMyMinerPlay() {
       const data = await myMinePlay(this.getAddress);
-      this.amountSum = data.amountSum.toFixed(4);
-      this.list = data.list.map((item) => {
+      this.seleceted = data.list[0];
+      this.currentIndex = data.list[0].id;
+      this.list = data.list;
+    },
+    async getRewardList() {
+      const data = await minerRewardRecord(
+        this.getAddress,
+        this.seleceted.id,
+        this.current
+      );
+      this.assetList = data.list.map((item) => {
         return {
           ...item,
           createdAt: timeago.format(item.createdAt, "zh_CN"),
@@ -139,6 +126,7 @@ export default {
 
   async created() {
     await this.getMyMinerPlay();
+    await this.getRewardList();
   },
 };
 </script>

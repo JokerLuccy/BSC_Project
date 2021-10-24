@@ -59,7 +59,7 @@
           <van-progress
             track-color="#E8ECF1"
             color="linear-gradient(180deg, #2EBEF3 0%, #007EFF 100%)"
-            :percentage="50"
+            :percentage="minerDetail.rate * 100"
             stroke-width="8"
             :show-pivot="false"
           />

@@ -62,21 +62,27 @@
     </form>
     <div class="withdraw-table">
       <h4>明细</h4>
-      <van-list class="withdraw-list">
+      <van-list v-if="withdrawRecordList.length" class="withdraw-list">
         <div class="table-title">
           <p class="time">时间</p>
           <p class="count">数量</p>
           <p class="address">地址</p>
-          <p class="status">地址</p>
+          <p class="status">状态</p>
         </div>
-        <div class="table-title-item" v-for="item in 100" :key="item">
-          <p class="time">3分钟前</p>
-          <p class="count">26.0000 SLP</p>
-          <p class="address">8cfEC…A3F</p>
-          <p class="status">正在上链</p>
+        <div
+          class="table-title-item"
+          v-for="item in withdrawRecordList"
+          :key="item._id"
+        >
+          <p class="time">{{ item.createdAt }}</p>
+          <p class="count">{{ item.amount }} {{ item.asset }}</p>
+          <p class="address">
+            {{ item.addressTo.slice(0, 5) + "****" + item.addressTo.slice(-3) }}
+          </p>
+          <p class="status">{{ item.progress }}</p>
         </div>
       </van-list>
-      <no-data v-if="false" />
+      <no-data v-else />
     </div>
     <van-dialog
       className="dialog-pwd"
@@ -104,7 +110,13 @@
 
 <script>
 import CommonHeader from "../../components/CommonHeader.vue";
-import { getBalance, getWithdrawFee, withdraw } from "../../server";
+import * as timeago from "timeago.js";
+import {
+  getBalance,
+  getWithdrawFee,
+  withdraw,
+  withdrawRecord,
+} from "../../server";
 
 export default {
   components: { CommonHeader },
@@ -141,6 +153,8 @@ export default {
       withdrawAmount: 0,
       isShooDialog: false,
       password: "",
+      current: 1,
+      withdrawRecordList: [],
     };
   },
   computed: {
@@ -186,9 +200,10 @@ export default {
       this.isShooDialog = true;
       return false;
     },
-    handleSelect(val) {
+    async handleSelect(val) {
       this.selectAsset = val;
       this.visiable = !this.visiable;
+      await this.getWithdrawRecord();
     },
     handleCoinList(event) {
       event.preventDefault();
@@ -208,10 +223,26 @@ export default {
       this.withdrawInfo.slpMinWithdraw = slpInfo.min;
       this.withdrawInfo.slpFee = slpInfo.fee;
     },
+    async getWithdrawRecord() {
+      const data = await withdrawRecord(
+        this.getAddress,
+        this.current,
+        this.selectAsset.name
+      );
+      this.withdrawRecordList = data.list.map((item) => {
+        return {
+          ...item,
+          createdAt: timeago.format(item.createdAt, "zh_CN"),
+          progress: item.progress ? "成功" : "失败",
+        };
+      });
+    },
   },
   async created() {
     await this.getAssetBalance();
     await this.getFee();
+    await this.getWithdrawRecord();
+    await this.getWithdrawRecord();
   },
 };
 </script>
