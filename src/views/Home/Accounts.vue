@@ -20,7 +20,7 @@
             {{ item.name }}
             <br />
             <div class="account-number">
-              {{ item.count }}
+              {{ item.count.toFixed(4) }}
               {{ item.unit }}
             </div>
           </label>
