@@ -15,7 +15,7 @@ export default {
     title: { ype: String, default: "标题" },
     amount: { type: Number, default: 0 },
     unit: { type: String, default: "USDT" },
-    userLevel: { type: String, default: "普通用户" },
+    userLevel: { type: String, default: "" },
   },
 
   computed: {

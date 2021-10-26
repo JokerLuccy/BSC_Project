@@ -1,7 +1,11 @@
 <template>
   <div class="accounts">
     <common-header title="账户详情" />
-    <cumulative-card title="累计：" :amount="amountSum.toFixed(4)" />
+    <cumulative-card
+      title="累计："
+      :amount="amountSum.toFixed(4)"
+      :userLevel="userInfo.isNodeUser ? '经理人' : '普通用户'"
+    />
     <div class="account-table">
       <h4>明细</h4>
       <van-list
@@ -38,6 +42,7 @@ import CumulativeCard from "../../components/CumulativeCard.vue";
 import NoData from "../../components/NoData.vue";
 import { myMinePlay } from "../../server/index";
 import * as timeago from "timeago.js";
+import { mapState } from "vuex";
 export default {
   name: "Accounts",
   components: { CommonHeader, CumulativeCard, NoData },
@@ -49,6 +54,9 @@ export default {
       amountSum: 0,
       current: 1,
     };
+  },
+  computed: {
+    ...mapState({ userInfo: (state) => state.common.userInfo }),
   },
   methods: {
     async onLoad() {
@@ -73,6 +81,7 @@ export default {
   },
   async created() {
     await this.getMyminerPlay();
+    await this.$store.dispatch("getUserInfo", { address: this.getAddress });
   },
 };
 </script>
