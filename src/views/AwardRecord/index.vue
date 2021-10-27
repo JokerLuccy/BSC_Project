@@ -18,7 +18,7 @@
         </div>
         <div class="table-title-item" v-for="item in list" :key="item._id">
           <p class="time">{{ item.createdAt }}</p>
-          <p class="coin">{{ item.amount }}</p>
+          <p class="coin">{{ item.amount.toFixed(4) }}</p>
           <p class="source">合约奖励</p>
         </div>
       </van-list>

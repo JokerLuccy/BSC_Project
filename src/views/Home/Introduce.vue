@@ -31,16 +31,16 @@ export default {
   data() {
     return {
       introduceList: Object.freeze([
-        { id: 1, text: "灵犀MAX创造了一个更为广阔的Axie算力市场。" },
+        { id: 1, text: "灵犀MAX创造了一个更为广阔的AXIE算力市场。" },
         {
           id: 2,
           text: "灵犀MAX让全球范围内的虚拟资产都可以更加自由和高效的进出该市场。",
         },
         {
           id: 3,
-          text: "每一期的Axie算力合约都有真实的Axie账户铸造，意味着真实有效投入到Axie元宇宙网络。",
+          text: "每一期的AXIE算力合约都有真实的AXIE账户铸造，意味着真实有效投入到AXIE元宇宙网络。",
         },
-        { id: 4, text: "用户持有Axie算力合约即可进行无差别的Axie的SLP获取。" },
+        { id: 4, text: "用户持有AXIE算力合约即可进行无差别的AXIE的SLP获取。" },
       ]),
     };
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="contract">
-    <sign title="Axie算力合约" />
+    <sign title="AXIE算力合约" />
     <div class="content">
       <ul class="title-list">
         <li
@@ -81,7 +81,7 @@
             v-for="item in minerBuyInfo.arr"
             :key="item.id"
           >
-            {{ `${item.minerType === 1 ? "初级" : "高级"} ${item.usdt} USDT` }}
+            {{ `${item.level} ${item.usdt} USDT` }}
             <img
               v-show="currentMinerType === item.minerType"
               src="../../assets/images/correct-white.png"
@@ -149,7 +149,10 @@ export default {
         const arr = [];
         this.minerList.forEach((item) => {
           if (item.minerType === 1 || item.minerType === 2) {
-            arr.push(item);
+            arr.push({
+              ...item,
+              level: item.minerType === 1 ? "初级" : "高级",
+            });
           }
         });
         return {
@@ -160,7 +163,10 @@ export default {
         const arr = [];
         this.minerList.forEach((item) => {
           if (item.minerType === 3 || item.minerType === 4) {
-            arr.push(item);
+            arr.push({
+              ...item,
+              level: item.minerType === 3 ? "初级" : "高级",
+            });
           }
         });
         return {

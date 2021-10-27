@@ -6,10 +6,9 @@
         @click="handleSelect(item)"
         :class="{
           'list-item': 'list-item',
-          'active-list-item':
-            currentIndex === item.id ? 'active-list-item' : '',
+          'active-list-item': currentId === item.id ? 'active-list-item' : '',
         }"
-        v-for="item in list"
+        v-for="item in getList"
         :key="item.id"
       >
         {{ item.name }}
@@ -18,12 +17,12 @@
     <div class="game-card">
       <div class="left">
         <p class="top">累计</p>
-        <p class="center">{{ seleceted.rewarded }} SLP</p>
+        <p class="center">{{ currentInfo.rewarded }} SLP</p>
         <p class="bottom">{{ nowDate }}</p>
       </div>
       <div class="right">
         <p class="top">可提取</p>
-        <p class="center">{{ seleceted.extract }}SLP</p>
+        <p class="center">{{ currentInfo.extract }}SLP</p>
         <button @click="handleExtract" class="bottom">提取</button>
       </div>
     </div>
@@ -73,11 +72,16 @@ export default {
       rewardList: [],
       current: 1,
       assetList: [],
+      currentId: "",
+      currentInfo: {},
     };
   },
   computed: {
     nowDate() {
       return dayjs(Date.now()).format("YYYY-MM-DD");
+    },
+    getList() {
+      return this.list;
     },
   },
   methods: {
@@ -95,24 +99,25 @@ export default {
       }
     },
     async handleSelect(item) {
-      this.currentIndex = item.id;
-      this.seleceted = item;
+      this.currentId = item.id;
+      this.currentInfo = item;
       await this.getRewardList();
     },
     async handleExtract() {
-      await extract(this.getAddress, this.seleceted.id);
+      await extract(this.getAddress, this.currentInfo.id);
       await this.getMyMinerPlay();
+      this.currentInfo = this.list.filter(
+        (item) => item.id === this.currentId
+      )[0];
     },
     async getMyMinerPlay() {
       const data = await myMinePlay(this.getAddress);
-      this.seleceted = data.list[0];
-      this.currentIndex = data.list[0].id;
       this.list = data.list;
     },
     async getRewardList() {
       const data = await minerRewardRecord(
         this.getAddress,
-        this.seleceted.id,
+        this.currentInfo.id,
         this.current
       );
       this.assetList = data.list.map((item) => {
@@ -124,8 +129,10 @@ export default {
     },
   },
 
-  async created() {
+  async mounted() {
     await this.getMyMinerPlay();
+    this.currentId = this.list[0].id;
+    this.currentInfo = this.list[0];
     await this.getRewardList();
   },
 };

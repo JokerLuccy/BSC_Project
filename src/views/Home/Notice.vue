@@ -49,7 +49,8 @@ export default {
       const lastId = await this.getLastId();
       const localId = localStorage.getItem("lastId");
       if (localId) {
-        if (lastId !== localId && lastId !== "") {
+        if (lastId !== localId && localId !== "init") {
+          console.log("123123");
           const res = await list("");
           this.announceList = res.map((item) => {
             return {
@@ -58,6 +59,8 @@ export default {
             };
           });
           this.visiable = true;
+          localStorage.setItem("lastId", lastId);
+        } else {
           localStorage.setItem("lastId", lastId);
         }
       } else {

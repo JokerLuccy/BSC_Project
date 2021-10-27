@@ -15,7 +15,9 @@
       </div>
       <div class="table-title-item" v-for="item in list" :key="item._id">
         <p class="time">{{ item.createdAt }}</p>
-        <p class="address">{{ item.address }}</p>
+        <p class="address">
+          {{ item.address.slice(0, 13) + "***" + item.address.slice(-4) }}
+        </p>
       </div>
     </van-list>
     <no-data v-else />

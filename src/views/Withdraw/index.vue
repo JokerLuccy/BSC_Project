@@ -79,10 +79,10 @@
           <p class="address">
             {{ item.addressTo.slice(0, 5) + "****" + item.addressTo.slice(-3) }}
           </p>
-          <p class="status">{{ item.progress }}</p>
+          <p class="status">{{ status["" + item.progress] }}</p>
         </div>
       </van-list>
-      <no-data v-else />
+      <NoData v-else />
     </div>
     <van-dialog
       className="dialog-pwd"
@@ -111,6 +111,7 @@
 <script>
 import CommonHeader from "../../components/CommonHeader.vue";
 import * as timeago from "timeago.js";
+import NoData from "../../components/NoData.vue";
 import {
   getBalance,
   getWithdrawFee,
@@ -119,7 +120,7 @@ import {
 } from "../../server";
 
 export default {
-  components: { CommonHeader },
+  components: { CommonHeader, NoData },
   name: "Withdraw",
   data() {
     return {
@@ -155,6 +156,11 @@ export default {
       password: "",
       current: 1,
       withdrawRecordList: [],
+      status: {
+        1: "正在上链",
+        2: "成功",
+        3: "驳回",
+      },
     };
   },
   computed: {
@@ -182,6 +188,7 @@ export default {
         this.getAddress
       );
       await this.getAssetBalance();
+      await this.getWithdrawRecord();
       this.withdrawAddress = "";
       this.withdrawAmount = 0;
       this.password = "";
@@ -233,7 +240,6 @@ export default {
         return {
           ...item,
           createdAt: timeago.format(item.createdAt, "zh_CN"),
-          progress: item.progress ? "成功" : "失败",
         };
       });
     },
@@ -241,7 +247,6 @@ export default {
   async created() {
     await this.getAssetBalance();
     await this.getFee();
-    await this.getWithdrawRecord();
     await this.getWithdrawRecord();
   },
 };
