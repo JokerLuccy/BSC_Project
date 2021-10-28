@@ -50,7 +50,6 @@ export default {
       const localId = localStorage.getItem("lastId");
       if (localId) {
         if (lastId !== localId && localId !== "init") {
-          console.log("123123");
           const res = await list("");
           this.announceList = res.map((item) => {
             return {
