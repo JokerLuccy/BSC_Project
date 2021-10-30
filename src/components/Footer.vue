@@ -2,7 +2,7 @@
   <div class="footer">
     <div class="top">
       <div class="title">
-        <div class="circle"></div>
+        <img class="circle" src="../assets/images/logo.png" />
         灵犀MAX
       </div>
       <div class="foot-divider"></div>
@@ -64,9 +64,6 @@ export default {
       .circle {
         width: 26px;
         height: 26px;
-        background: #ffffff;
-        border-radius: 50%;
-        opacity: 1;
       }
     }
     .sponsorship {
